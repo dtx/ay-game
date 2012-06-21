@@ -1,6 +1,7 @@
 var io		= require('socket.io').listen(81);
 
 var mysql	= require('mysql');
+
 var db		= mysql.createConnection({
   host: 'localhost',
   user: 'game',
