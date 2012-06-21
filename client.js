@@ -1,5 +1,18 @@
 var socket	= io.connect('http://dev.anuary.com:81');
 
+/**
+ * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
+ * @param obj1
+ * @param obj2
+ * @returns obj3 a new object based on obj1 and obj2
+ */
+function merge_options(obj1,obj2){
+    var obj3 = {};
+    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    return obj3;
+}
+
 var game	=
 {
 	session: null,
@@ -53,27 +66,38 @@ var game	=
 			{
 				return;
 			}
-		
-			var x	= 0;
-			var y 	= 0;
 			
-			switch(key)
+			if(key == 32)
 			{
-				case 37: --x; break;
-				case 38: --y; break;
-				case 39: ++x; break;
-				case 40: ++y; break;
-				default: return; break;
+				socket.emit('user-change-color', function(color){				
+					game.user.color	= color;
+					
+					game.fn.updateCanvas();
+				});
 			}
-			
-			if(!game.fn.isWall(game.user.x+x, game.user.y+y))
+			else
 			{
-				game.user.x	+= x;
-				game.user.y	+= y;
+				var x	= 0;
+				var y 	= 0;
 				
-				socket.emit('user-action', game.user);
-			
-				game.fn.updateCanvas();
+				switch(key)
+				{
+					case 37: --x; break;
+					case 38: --y; break;
+					case 39: ++x; break;
+					case 40: ++y; break;
+					default: return; break;
+				}
+				
+				if(!game.fn.isWall(game.user.x+x, game.user.y+y))
+				{
+					game.user.x	+= x;
+					game.user.y	+= y;
+					
+					socket.emit('user-action', game.user);
+				
+					game.fn.updateCanvas();
+				}
 			}
 		},
 		updateCanvas: function()

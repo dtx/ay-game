@@ -75,12 +75,30 @@ db.connect(function(){
 			});
 		});
 		
+		socket.on('user-change-color', function(fn){
+			if(!game.user)
+			{
+				return;
+			}
+
+			game.user.color	= game.fn.randomColor();
+			
+			db.query("UPDATE users SET color = ? WHERE id = ?;", [game.user.color, game.user.id], function(){				
+				socket.broadcast.emit('user-moved', {id: game.user.id, x: game.user.x, y: game.user.y, color: game.user.color});
+			});
+			
+			fn(game.user.color);
+		});
+		
 		socket.on('user-action', function(user)
 		{
 			if(!game.user)
 			{
 				return;
 			}
+			
+			game.user.x	= user.x;
+			game.user.y	= user.y;
 					
 			db.query("UPDATE users SET x = ?, y = ? WHERE id = ?;", [user.x, user.y, game.user.id], function(){				
 				socket.broadcast.emit('user-moved', {id: game.user.id, x: user.x, y: user.y, color: game.user.color});
