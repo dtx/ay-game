@@ -2,8 +2,9 @@ var socket	= io.connect('http://dev.anuary.com:81');
 
 var game	=
 {
-	data: null,
+	session: null,
 	user: null,
+	data: null,
 	walls:
 	[
 		//[x1,y1,x2,y2]
@@ -16,8 +17,6 @@ var game	=
 		[130,20,140,120],
 		[150,20,160,140],
 	],
-	connected: false,
-	user_coordinates: null,
 	fn:
 	{
 		init: function(options)
@@ -48,9 +47,9 @@ var game	=
 			
 			return false;
 		},
-		walk: function(key)
+		userAction: function(key)
 		{
-			if(!game.user_coordinates)
+			if(!game.user)
 			{
 				return;
 			}
@@ -67,14 +66,53 @@ var game	=
 				default: return; break;
 			}
 			
-			if(!game.fn.isWall(game.user_coordinates.x+x, game.user_coordinates.y+y))
+			if(!game.fn.isWall(game.user.x+x, game.user.y+y))
 			{
-				game.user_coordinates.x	+= x;
-				game.user_coordinates.y	+= y;
+				game.user.x	+= x;
+				game.user.y	+= y;
 				
-				socket.emit('move', game.user_coordinates);
+				socket.emit('user-action', game.user);
 			
-				draw(game.data.clients);
+				game.fn.updateCanvas();
+			}
+		},
+		updateCanvas: function()
+		{
+			var canvas	= document.getElementById('game');
+			
+			var ctx		= canvas.getContext('2d');
+				
+			ctx.save();
+			
+			var linear_gradient	= ctx.createLinearGradient(0,0,300,300);
+			
+			linear_gradient.addColorStop(0, '#232256');
+			linear_gradient.addColorStop(1, '#143778');
+			
+			ctx.fillStyle	= linear_gradient;
+			ctx.fillRect(0,0,300,300);
+			
+			ctx.restore();
+		
+			ctx.save();
+			
+			ctx.fillStyle	= '#000000';
+			
+			// draw walls
+			for(var i = 0, j = game.walls.length; i < j; i++)
+			{
+				ctx.fillRect(game.walls[i][0], game.walls[i][1], game.walls[i][2]-game.walls[i][0], game.walls[i][3]-game.walls[i][1]);
+			}
+			
+			ctx.restore();
+			
+			for(var i = 0, j = game.data.users.length; i < j; i++)
+			{
+				ctx.fillStyle	= game.data.users[i].color; 
+				
+				//console.log(game.data.users[i].color);
+				
+				ctx.fillRect(game.data.users[i].x*10, game.data.users[i].y*10, 10, 10);
 			}
 		}
 	}
@@ -86,90 +124,44 @@ socket.on('user-moved', function(user){
 		return;
 	}
 
-	for(var i = 0, j = game.data.clients.length; i < j; i++)
+	for(var i = 0, j = game.data.users.length; i < j; i++)
 	{
-		if(game.data.clients[i].id == user.id)
+		if(game.data.users[i].id == user.id)
 		{
-			game.data.clients[i]	= user;
+			game.data.users[i]	= user;
 			
 			break;
 		}
 	}
 	
-	draw(game.data.clients);
+	game.fn.updateCanvas();
 })
 
-socket.on('populate', function(data)
+socket.on('propogate', function(data)
 {
 	game.data	= data;
 	
-	if(data.user)
+	// data.user object is sent only
+	// upon first propogation of data
+	if(game.data.user)
 	{
-		game.user	= data.user;
-	}
-	
-	if(data.clients.length)
-	{
-		for(var i = 0, j = data.clients.length; i < j; i++)
-		{
-			if(data.clients[i].id == game.user.id)
-			{
-				game.user_coordinates	= data.clients[i];
-				
-				break;
-			}
-		}
-	}
-	
-	if(!game.connected)
-	{
-		game.connected		= true;
-	
+		game.session	= game.data.user;
+		
 		document.onkeydown	= function(e)
 		{
-			game.fn.walk(e.keyCode);
+			game.fn.userAction(e.keyCode);
 		};
 	}
 	
-	draw(data.clients);
+	for(var i = 0, j = game.data.users.length; i < j; i++)
+	{
+		if(game.data.users[i].id == game.session.id)
+		{
+			game.user	= game.data.users[i];
+			
+			break;
+		}
+	}
+	
+	game.fn.updateCanvas();
 });
-
-function draw(clients)
-{
-	var canvas	= document.getElementById('game');
-	
-	var ctx		= canvas.getContext('2d');
-		
-	ctx.save();
-	
-	var linear_gradient	= ctx.createLinearGradient(0,0,300,300);
-	
-	linear_gradient.addColorStop(0, '#232256');
-	linear_gradient.addColorStop(1, '#143778');
-	
-	ctx.fillStyle	= linear_gradient;
-	ctx.fillRect(0,0,300,300);
-	
-	ctx.restore();
-
-	ctx.save();
-	
-	ctx.fillStyle	= '#000000';
-	
-	// draw walls
-	for(var i = 0, j = game.walls.length; i < j; i++)
-	{
-		ctx.fillRect(game.walls[i][0], game.walls[i][1], game.walls[i][2]-game.walls[i][0], game.walls[i][3]-game.walls[i][1]);
-	}
-	
-	ctx.restore();
-	
-	//console.log('test');
-	
-	ctx.fillStyle	= '#FFF';
-	
-	for(var i = 0, j = clients.length; i < j; i++)
-	{
-		ctx.fillRect(clients[i].x*10, clients[i].y*10, 10, 10);
-	}
-}

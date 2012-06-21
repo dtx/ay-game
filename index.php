@@ -18,8 +18,8 @@ game.fn.init(<?=json_encode(['session_id' => session_id()])?>);
 setInterval(function(){
 	var keys	= [37,38,39,40];
 
-	game.fn.walk(keys[Math.floor(Math.random() * keys.length)]);
-}, 150);
+	game.fn.userAction(keys[Math.floor(Math.random() * keys.length)]);
+}, 250);
 <?php endif;?>
 </script>
 </head>
