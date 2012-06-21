@@ -29,7 +29,6 @@ db.connect(function(){
 				populate: function()
 				{
 					db.query("SELECT id, x, y FROM users WHERE `show` = 1;", function(err, rows){
-						
 						socket.broadcast.emit('populate', {clients: rows});
 					});
 				}
@@ -70,8 +69,10 @@ db.connect(function(){
 				return;
 			}
 					
-			db.query("UPDATE users SET x = ?, y = ? WHERE id = ?;", [coordinates.x, coordinates.y, game.user.id], function(){
-				game.fn.populate();
+			db.query("UPDATE users SET x = ?, y = ? WHERE id = ?;", [coordinates.x, coordinates.y, game.user.id], function(){				
+				socket.broadcast.emit('user-moved', {id: game.user.id, x: coordinates.x, y: coordinates.y});
+			
+				//game.fn.populate();
 			});
 		});
 	});
