@@ -21,7 +21,7 @@ db.connect(function(){
 				join: function(user)
 				{
 					game.user	= user;
-				
+			
 					db.query("UPDATE users SET `show` = 1 WHERE ?;", {id: user.id}, function(){
 						db.query("SELECT id, x, y, color FROM users WHERE `show` = 1;", user.id, function(err, rows){
 							socket.emit('propogate', {users: rows, user: user});

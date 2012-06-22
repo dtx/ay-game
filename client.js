@@ -179,6 +179,7 @@ socket.on('propogate', function(data)
 		};
 	}
 	
+
 	for(var i = 0, j = game.data.users.length; i < j; i++)
 	{
 		if(game.data.users[i].id == game.session.id)
