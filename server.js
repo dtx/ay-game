@@ -80,9 +80,11 @@ db.connect(function(){
 			{
 				return;
 			}
-
+            //TODO: keep a record of the colors currently alloted
+            //TODO: dont give that color to the any other player
+            //TODO: release the color once a player leave and make it free to be claimed.
 			game.user.color	= game.fn.randomColor();
-			
+		    //is this good to write to DB everytime the color changes? not scalable.	
 			db.query("UPDATE users SET color = ? WHERE id = ?;", [game.user.color, game.user.id], function(){				
 				socket.broadcast.emit('user-moved', {id: game.user.id, x: game.user.x, y: game.user.y, color: game.user.color});
 			});

@@ -12,7 +12,7 @@ function merge_options(obj1,obj2){
     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
     return obj3;
 }
-
+//THINK: I think this is the main game.
 var game	=
 {
 	session: null,
@@ -42,7 +42,9 @@ var game	=
 			var y1	= y*10;
 			var x2	= x1+10;
 			var y2	= y1+10;
-			
+
+			//do i need to run a loop everytime the user moves? 
+            //can this be optimized?
 			for(var i = 0, j = game.walls.length; i < j; i++)
 			{
 				var p	= game.walls[i];
@@ -51,7 +53,7 @@ var game	=
 				var y3	= p[1];
 				var x4	= p[2];
 				var y4	= p[3];
-				
+			    //wtf is happening here? probably i am just too sleepy.	
 				if(x2 > x3 && x1 < x4 && y2 > y3 && y1 < y4)
 				{
 					return true;
@@ -88,7 +90,7 @@ var game	=
 					case 40: ++y; break;
 					default: return; break;
 				}
-				
+			    	
 				if(!game.fn.isWall(game.user.x+x, game.user.y+y))
 				{
 					game.user.x	+= x;
