@@ -1,4 +1,4 @@
-var socket	= io.connect('http://dev.anuary.com:81');
+var socket	= io.connect('http://localhost:81');
 
 /**
  * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
@@ -20,6 +20,7 @@ var game	=
 	data: null,
 	walls:
 	[
+
 		//[x1,y1,x2,y2]
 		[0,0,290,10],
 		[0,10,10,300],
@@ -62,6 +63,7 @@ var game	=
 			
 			return false;
 		},
+        //called from the PHP first.
 		userAction: function(key)
 		{
 			if(!game.user)
@@ -163,9 +165,15 @@ socket.on('user-moved', function(user){
 	game.fn.updateCanvas();
 })
 
+/**
+bind the onkeydown
+initialise game.session, this is only done in the beginning
+get all the current users, when u find the current users in that array,
+copy that user to game.user. Then update the canvas, once we have all the data set up.
+**/
 socket.on('propogate', function(data)
 {
-	game.data	= data;
+	game.data = data;
 	
 	// data.user object is sent only
 	// upon first propogation of data
