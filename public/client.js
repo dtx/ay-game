@@ -1,4 +1,4 @@
-var socket	= io.connect('http://localhost:81');
+var socket	= io.connect('http://localhost');
 
 /**
  * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
@@ -33,9 +33,9 @@ var game	=
 	],
 	fn:
 	{
-		init: function(options)
+		init: function(sessionid)
 		{
-			socket.emit('authorize', options.session_id);
+			socket.emit('authorize', sessionid);
 		},
 		isWall: function(x,y)
 		{		
@@ -66,6 +66,7 @@ var game	=
         //called from the PHP first.
 		userAction: function(key)
 		{
+            console.log("in user action");
 			if(!game.user)
 			{
 				return;

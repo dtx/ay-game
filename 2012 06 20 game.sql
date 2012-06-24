@@ -6,7 +6,7 @@
 # http://code.google.com/p/sequel-pro/
 #
 # Host: 127.0.0.1 (MySQL 5.5.25)
-# Database: 2012 06 20 game
+# Database: Users 
 # Generation Time: 2012-06-20 17:02:11 +0000
 # ************************************************************
 
@@ -31,6 +31,7 @@ CREATE TABLE `users` (
   `x` int(10) unsigned NOT NULL DEFAULT '1',
   `y` int(10) unsigned NOT NULL DEFAULT '1',
   `show` tinyint(3) unsigned NOT NULL DEFAULT '1',
+  `color` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `session_id` (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
