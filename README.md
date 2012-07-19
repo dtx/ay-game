@@ -5,3 +5,7 @@ I've setup this Git to ease the process of people helping me to perfect this "ga
 The code is using Node.js and Socket.io.
 
 Demo is available at http://dev.anuary.com/1f1715ac-ad96-536a-a462-74381c7a2baf/. The game is controlled using arrow keys and spacebar.
+
+####The above link contains the old version we started out with####
+To hack the current version, just ```git clone
+https://www.github.com/dtx/ay-game/``` and run it on the local machine.

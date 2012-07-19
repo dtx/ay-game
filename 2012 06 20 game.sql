@@ -6,7 +6,7 @@
 # http://code.google.com/p/sequel-pro/
 #
 # Host: 127.0.0.1 (MySQL 5.5.25)
-# Database: Users 
+# Database: Users
 # Generation Time: 2012-06-20 17:02:11 +0000
 # ************************************************************
 
